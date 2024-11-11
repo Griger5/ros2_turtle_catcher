@@ -1,1 +1,1 @@
-string[] turtle_names
+Turtle[] turtles
