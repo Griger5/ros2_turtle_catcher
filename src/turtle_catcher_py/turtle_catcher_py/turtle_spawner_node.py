@@ -17,6 +17,8 @@ class TurtleSpawnerNode(Node):
 
         self.turtles_publisher_ = self.create_publisher(TurtleArray, "/turtles", 10)
 
+        self.killed_turtle_sub_ = self.create_subscription(Turtle, "/killed_turtle", self.callback_killed_turtle, 10)
+
     def call_spawn_turtle_service(self):
         client = self.create_client(Spawn, "/spawn")
 
@@ -53,6 +55,13 @@ class TurtleSpawnerNode(Node):
         msg.turtles = self.turtles
 
         self.turtles_publisher_.publish(msg)
+
+    def callback_killed_turtle(self, msg: Turtle):
+        for (i,turtle) in enumerate(self.turtles):
+            if turtle.name == msg.name:
+                self.turtles.pop(i)
+                self.publish_turtles()
+                break
 
 
 def main(args=None):
